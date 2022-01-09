@@ -1,5 +1,6 @@
 package model;
 
+import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,18 +20,11 @@ public class AppointmentDB {
     public void addAppointment(Appointment appointment) throws Exception {
         buildAppointmentTable();
 
-        int appointmentNumber = 0;
-        var numberOfEntries = 0;
-        PsqlDB psqlDB = new PsqlDB("localhost:5432/records");
-        String sql = "SELECT COUNT(*) from appointments";
-        ResultSet rs = psqlDB.queryDB(sql);
-        while (rs.next()) {
-            numberOfEntries = rs.getInt(1);
-            appointmentNumber = numberOfEntries == 0 ? 1 : numberOfEntries + 1;
-        }
+        SecureRandom randomGenerator = new SecureRandom();
+        int appointmentNumber = randomGenerator.nextInt(100_000);
 
-        psqlDB = new PsqlDB("localhost:5432/records");
-        sql = "INSERT INTO Appointments (appointmentNumber, appointmentType, appointmentPet," +
+        PsqlDB psqlDB = new PsqlDB("localhost:5432/records");
+        String sql = "INSERT INTO Appointments (appointmentNumber, appointmentType, appointmentPet," +
                 "appointmentDate, appointmentName, userEmail) Values(" + appointmentNumber +
                 ", '" + appointment.getAppointmentType() + "', '" + appointment.getAppointmentPet() + "', '" +
                 appointment.getAppointmentDate() + "', '" + appointment.getAppointmentName() + "', '" +
